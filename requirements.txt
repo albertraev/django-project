@@ -1,0 +1,5 @@
+Django==3.1.12
+djangorestframework==3.11.2
+pytz==2019.3
+redis==3.3.11
+sqlparse==0.3.0
