@@ -1,0 +1,54 @@
+
+---
+- name: django + redis + docker container
+  hosts: all
+  become: yes
+
+
+
+  vars:
+      source_file: /root/newproject/django-project
+      destin_file: /root
+      project_path: /root/django-project
+     
+  tasks:
+       - name: Copy Django app
+         copy: src={{ source_file }} dest={{ destin_file }} mode=0755
+      
+
+       - name: Install PIP
+         apt:
+            pkg:
+                - python3-pip
+
+       - name: Install Redis
+         apt: name=redis-server state=latest
+
+       - name: Install Docker
+         apt: name={{ item }} state=latest update_cache=yes
+         loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+       - name: Add Docker GPG apt Key
+         apt_key:
+            url: https://download.docker.com/linux/ubuntu/gpg
+            state: present
+       - name: Add Docker Repository
+         apt_repository:
+            repo: deb https://download.docker.com/linux/ubuntu bionic stable
+            state: present
+       - name: Update apt and install docker-ce
+         apt: update_cache=yes name=docker-ce state=latest
+       - name: Install Docker Module for Python
+         pip:
+            name: docker
+
+         
+       - name: Build Docker Image
+         shell: "docker build -t new ./django-project"
+
+
+       - name: Run Docker Container
+         shell: "docker run -d --name=django_new -p 8000:8000 -p 6379:6379 new && docker exec django_new redis-server"
+                  
+            
+               
+
