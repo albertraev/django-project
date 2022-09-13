@@ -6,4 +6,6 @@ docker run -d --name=django_new -p 8000:8000 -p 6379:6379 new && docker exec dja
 
 проверка работы приложения в браузере:
 
-http://185.251.90.37:8000/api/items
+http://141.8.195.239:8000/api/items
+
+
