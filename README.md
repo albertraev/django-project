@@ -1,11 +1,12 @@
 Для запуска контейнера в фоновом режиме используйте команду:
 
-docker run -d --name=django_new -p 8000:8000 -p 6379:6379 new && docker exec django_new redis-server
+docker run -d -p 8000:8000 -p 6378:6379 new
 
 Будет создан контейнер из образа new с именем django_new с запущенными redis и  django внутри.
 
 проверка работы приложения в браузере:
 
 http://141.8.195.239:8000/api/items
+
 
 
