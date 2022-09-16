@@ -11,6 +11,8 @@
       source_file: /root/newproject/django-project
       destin_file: /root
       project_path: /root/django-project
+      redis_service: /root/django-project/redis.service
+      redis_slave: /root/django-project/redis-slave.conf
      
   tasks:
        - name: Copy Django app
@@ -24,6 +26,10 @@
 
        - name: Install Redis
          apt: name=redis-server state=latest
+
+       - name: create redis replica
+         copy: src={{ redis_service }} dest=/root/etc/systemd/system mode=0755
+         copy: src={{ redis_slave }} dest=/root/etc/redis mode=0755
 
        - name: Install Docker
          apt: name={{ item }} state=latest update_cache=yes
@@ -43,12 +49,12 @@
             name: docker
 
          
-       - name: Build Docker Image
-         shell: "docker build -t new ./django-project"
+         # - name: Build Docker Image
+         # shell: "docker build -t new ./django-project"
 
 
-       - name: Run Docker Container
-         shell: "docker run -d --name=django_new -p 8000:8000 -p 6379:6379 new && docker exec django_new redis-server"
+         #- name: Run Docker Container
+         #shell: "docker run -d --name=django_new -p 8000:8000 -p 6379:6379 new && docker exec django_new redis-server"
                   
             
                
