@@ -49,12 +49,22 @@
             name: docker
 
          
-         # - name: Build Docker Image
-         # shell: "docker build -t new ./django-project"
+       - name: Build Docker Image
+         community.docker.docker_image:
+            name: new2
+            build:
+               path: ./
+         
+         
+       - name: Run Docker Container
+         community.docker.docker_container:
+             name: django_container
+             image: new2
+             ports:
+                   - "8000:8000"
+                   - "6378:6379"
 
-
-         #- name: Run Docker Container
-         #shell: "docker run -d --name=django_new -p 8000:8000 -p 6379:6379 new && docker exec django_new redis-server"
+         
                   
             
                
