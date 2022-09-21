@@ -25,6 +25,14 @@
          copy: src={{ redis_service }} dest=/etc/systemd/system/redis.service mode=0644
          copy: src={{ redis_slave }} dest=/etc/redis mode=0644
 
+       - name: Check configs
+         replace:
+                 path: "/etc/redis/redis.conf"
+                 regexp: '^bind 127.0.0.1 ::1$'
+                 replace: 'bind 0.0.0.0'
+                 regexp: '^supervised no$'
+                 replace: 'supervised systemd'
+
        - name: Install Docker
          apt: name={{ item }} state=latest update_cache=yes
          loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
