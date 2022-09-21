@@ -53,7 +53,7 @@
          community.docker.docker_image:
             name: new2
             build:
-               path: django-project/
+               path:/root/django-project
             source: build
          
          
