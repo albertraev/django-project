@@ -22,8 +22,8 @@
          apt: name=redis-server state=latest
 
        - name: create redis replica
-         copy: src={{ redis_service }} dest=/etc/systemd/system mode=0755
-         copy: src={{ redis_slave }} dest=/etc/redis mode=0755
+         copy: src={{ redis_service }} dest=/etc/systemd/system/redis.service mode=0644
+         copy: src={{ redis_slave }} dest=/etc/redis mode=0644
 
        - name: Install Docker
          apt: name={{ item }} state=latest update_cache=yes
