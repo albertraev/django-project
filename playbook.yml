@@ -1,7 +1,7 @@
 
 ---
 - name: django + redis + docker container
-  hosts: all
+  hosts: localhost
   become: yes
 
 
@@ -15,8 +15,8 @@
       redis_slave: /root/newproject/django-project/redis-slave.conf
      
   tasks:
-       - name: Copy Django app
-         copy: src={{ source_file }} dest={{ destin_file }} mode=0755
+#       - name: Copy Django app
+#         copy: src={{ source_file }} dest={{ destin_file }} mode=0755
       
 
        - name: Install PIP
