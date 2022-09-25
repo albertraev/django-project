@@ -21,8 +21,10 @@
        - name: Install Redis
          apt: name=redis-server state=latest
 
-       - name: create redis replica
+       - name: create redis systemd file
          copy: src={{ redis_service }} dest=/etc/systemd/system/redis.service mode=0644
+
+       - name: create redis replica
          copy: src={{ redis_slave }} dest=/etc/redis mode=0644
 
        - name: Check configs
@@ -30,8 +32,13 @@
                  path: "/etc/redis/redis.conf"
                  regexp: '^bind 127.0.0.1 ::1$'
                  replace: 'bind 0.0.0.0'
+
+       - name: Check configs_2
+         replace:
+                 path: "/etc/redis/redis.conf"
                  regexp: '^supervised no$'
                  replace: 'supervised systemd'
+
 
        - name: Install Docker
          apt: name={{ item }} state=latest update_cache=yes
