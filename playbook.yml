@@ -21,8 +21,8 @@
        - name: Install Redis
          apt: name=redis-server state=latest
 
-       - name: create redis systemd file
-         copy: src={{ redis_service }} dest=/etc/systemd/system/redis.service mode=0644
+#       - name: create redis systemd file
+#         copy: src={{ redis_service }} dest=/etc/systemd/system/redis.service mode=0644
 
        - name: create redis replica
          copy: src={{ redis_slave }} dest=/etc/redis mode=0644
@@ -62,7 +62,7 @@
          community.docker.docker_image:
             name: new2
             build:
-               path: django-project
+               path: /root/django-project/.
             source: build
          
          
