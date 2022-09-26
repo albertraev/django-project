@@ -22,16 +22,11 @@
          apt: name=redis-server state=latest
 
        - name: create redis systemd file
-         copy: src={{ redis_service }} dest=/etc/systemd/system/redis.service
-         owner: "root"
-         group: "root"
-         mode: 0644
+         copy: src={{ redis_service }} dest=/etc/systemd/system/redis.service owner=root group=root mode=0644
+
 
        - name: create redis replica
-         copy: src={{ redis_slave }} dest=/etc/redis 
-         owner: "redis"
-         group: "redis"
-         mode: 0644
+         copy: src={{ redis_slave }} dest=/etc/redis owner=redis group=redis mode=0644
 
        - name: Check configs
          replace:
@@ -46,12 +41,12 @@
                  regexp: '^supervised no$'
                  replace: 'supervised systemd'
 
-       - name: "Redis relication cluster restart"
-         systemd:
-          name: "redis-cluster"
-          state: restarted
-          enabled: yes
-          daemon_reload: yes
+#       - name: "Redis relication cluster restart"
+#         systemd:
+#          name: "redis-cluster"
+#          state: restarted
+#          enabled: yes
+#          daemon_reload: yes
 
 
        - name: Install Docker
