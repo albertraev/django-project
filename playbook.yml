@@ -41,9 +41,9 @@
                  regexp: '^supervised no$'
                  replace: 'supervised systemd'
 
-#       - name: "Redis relication cluster restart"
+#       - name: "Redis systemd restart"
 #         systemd:
-#          name: "redis-cluster"
+#          name: "redis.service"
 #          state: restarted
 #          enabled: yes
 #          daemon_reload: yes
