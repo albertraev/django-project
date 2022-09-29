@@ -22,8 +22,15 @@
          apt: name=redis-server state=latest
 
        - name: create redis systemd file
-         copy: src={{ redis_service }} dest=/etc/systemd/system/redis.service owner=root group=root mode=0644
-
+#         copy: src={{ redis_service }} dest=/etc/systemd/system/redis.service owner=root group=root mode=0644
+         replace:
+                 path: "/etc/systemd/system/redis.service"
+                 regexp: '^redis.conf$'
+                 replace: 'redis%i.conf'
+          replace: 
+                 path: "/etc/systemd/system/redis.service"
+                 regexp: '^/var/run/redis$'
+                 replace: '/var/run/redis%i'
 
        - name: create redis replica
          copy: src={{ redis_slave }} dest=/etc/redis owner=redis group=redis mode=0644
@@ -34,20 +41,20 @@
                  regexp: '^bind 127.0.0.1 ::1$'
                  replace: 'bind 0.0.0.0'
 
-
-       - name: Check configs_2
          replace:
                  path: "/etc/redis/redis.conf"
                  regexp: '^supervised no$'
                  replace: 'supervised systemd'
+        
+         notify: Redis Restart
 
-#       - name: "Redis systemd restart"
-#         systemd:
-#          name: "redis.service"
-#          state: restarted
-#          enabled: yes
-#          daemon_reload: yes
-
+       - name: "Redis systemd restart"
+         systemd:
+                 daemon_reload: true
+         when:
+                 - redis_as_service
+                 - ansible_service_mgr|default() == "systemd"
+                 - redis_unit_file is changed
 
        - name: Install Docker
          apt: name={{ item }} state=latest update_cache=yes
@@ -83,7 +90,12 @@
                    - "8000:8000"
                    - "6378:6379"
 
-         
+handlers:
+
+       - name: Redis Restart
+         service: name=redis-server state=restarted enabled=yes
+         service: name-redis-server@slave state=restarted enabled=yes
+         sudo: true
                   
             
                
