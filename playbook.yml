@@ -38,25 +38,25 @@
          lineinfile:
                  dest: /etc/systemd/system/redis.service
                  regexp: '^ExecStart'
-                 line: 'ExecStart=/usr/bin/redis-server /etc/redis/redis-%i.conf'
+                 line: 'ExecStart=/usr/bin/redis-server /etc/redis/redis%i.conf'
 
        - name: change redis systemd file
          lineinfile:
                  dest: /etc/systemd/system/redis.service
                  regexp: '^PIDFile'
-                 line: 'PIDFile=/var/run/redis-%i/redis-server.pid'
+                 line: 'PIDFile=/var/run/redis%i/redis-server.pid'
 
        - name: change redis systemd file
          lineinfile:
                  dest: /etc/systemd/system/redis.service
                  regexp: '^RuntimeDirectory'
-                 line: 'RuntimeDirectory=redis-%i'
+                 line: 'RuntimeDirectory=redis%i'
 
        - name: change redis systemd file
          lineinfile:
                  dest: /etc/systemd/system/redis.service
                  regexp: '^ReadWritePaths'
-                 line: 'ReadWritePaths=-/var/run/redis-%i'
+                 line: 'ReadWritePaths=-/var/run/redis%i'
 
        - name: change redis systemd file
          lineinfile:
