@@ -22,12 +22,13 @@
          apt: name=redis-server state=latest
 
        - name: create redis systemd file
-#         copy: src={{ redis_service }} dest=/etc/systemd/system/redis.service owner=root group=root mode=0644
          replace:
                  path: "/etc/systemd/system/redis.service"
                  regexp: '^redis.conf$'
                  replace: 'redis%i.conf'
-          replace: 
+
+       - name: fixed redis systemd file
+         replace:
                  path: "/etc/systemd/system/redis.service"
                  regexp: '^/var/run/redis$'
                  replace: '/var/run/redis%i'
@@ -41,20 +42,19 @@
                  regexp: '^bind 127.0.0.1 ::1$'
                  replace: 'bind 0.0.0.0'
 
+       - name: check configs_2
          replace:
                  path: "/etc/redis/redis.conf"
                  regexp: '^supervised no$'
                  replace: 'supervised systemd'
+
         
          notify: Redis Restart
 
        - name: "Redis systemd restart"
          systemd:
                  daemon_reload: true
-         when:
-                 - redis_as_service
-                 - ansible_service_mgr|default() == "systemd"
-                 - redis_unit_file is changed
+
 
        - name: Install Docker
          apt: name={{ item }} state=latest update_cache=yes
@@ -78,7 +78,7 @@
          community.docker.docker_image:
             name: new2
             build:
-               path: /root/newproject/django-project/.
+               path: /root/django-project/.
             source: build
          
          
@@ -88,14 +88,9 @@
              image: new2
              ports:
                    - "8000:8000"
-                   - "6378:6379"
+                   
 
-handlers:
 
-       - name: Redis Restart
-         service: name=redis-server state=restarted enabled=yes
-         service: name-redis-server@slave state=restarted enabled=yes
-         sudo: true
                   
             
                
