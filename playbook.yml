@@ -12,6 +12,14 @@
       
   
   tasks:
+
+       - name: Install collection community.docker
+         community.docker.ansible_galaxy_install:
+                 type: collection
+                 name: community.docker:2.0.2
+                 force: true
+
+
        - name: Update Apt
          apt:
              update_cache: yes
