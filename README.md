@@ -1,6 +1,11 @@
-Для запуска контейнера в фоновом режиме используйте команду:
+Подготовительные действия:
 
-docker run -d -p 8000:8000 -p 6378:6379 new
+- apt update
+- apt install ansible -y
+- git clone https://github.com/albertraev/django-project.git
+- ansible-galaxy collection install community.docker:2.0.2
+
+Для запуска playbook используйте команду ansible-playbook django-project/playbook.yml
 
 Будет создан контейнер из образа new с именем django_new с запущенным django внутри. Данные приложения будут храниться в redis на докерхосте.
 
