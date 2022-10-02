@@ -8,12 +8,11 @@
 
   vars:
       
-      redis_service: /root/django-project/redis.service
       redis_slave: /root/django-project/redis-slave.conf
       
   
   tasks:
-       - name: Update apt repo and cache on all Debian/Ubuntu boxes
+       - name: Update Apt
          apt:
              update_cache: yes
         
@@ -76,7 +75,7 @@
          notify:
                        - Restart Redis
 
-       - name: check configs_2
+       - name: change redis configs
          lineinfile:
                  dest: /etc/redis/redis.conf
                  regexp: '^supervised no$'
