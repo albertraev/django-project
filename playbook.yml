@@ -63,7 +63,14 @@
                  dest: /etc/systemd/system/redis.service
                  regexp: '^Description'
                  line: 'Description=Advanced key-value store (%I)'
-
+       
+       - name: Set CPUQota for Redis
+         lineinfile:
+                 dest: /etc/systemd/system/redis.service
+                 regexp: '^RuntimeDirectoryMode'
+                 insertafter: '^RuntimeDirectoryMode'
+                 line: 'CPUQuota=10%'
+                 state: present
 
        - name: create redis replica
          copy: src={{ redis_slave }} dest=/etc/redis owner=redis group=redis mode=0644
