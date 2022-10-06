@@ -9,8 +9,9 @@
   vars:
       
       redis_slave: /root/django-project/redis-slave.conf
-      
-  
+      redis_server_conf: redis%i
+      redis_bind: 0.0.0.0
+      systemd_yes: systemd
   tasks:
 
        - name: Update Apt
@@ -35,34 +36,38 @@
 
 
        - name: change redis systemd file
-         lineinfile:
-                 dest: /etc/systemd/system/redis.service
-                 regexp: '^ExecStart'
-                 line: 'ExecStart=/usr/bin/redis-server /etc/redis/redis%i.conf'
+#         lineinfile:
+#                 dest: /etc/systemd/system/redis.service
+#                 regexp: '^ExecStart'
+#                 line: 'ExecStart=/usr/bin/redis-server /etc/redis/redis%i.conf'
+          template:
+                  src: /root/newproject/django-project/redis_service_template.j2
+                  dest: /etc/systemd/system/redis.service 
 
-       - name: change redis systemd file
-         lineinfile:
-                 dest: /etc/systemd/system/redis.service
-                 regexp: '^PIDFile'
-                 line: 'PIDFile=/var/run/redis%i/redis-server.pid'
 
-       - name: change redis systemd file
-         lineinfile:
-                 dest: /etc/systemd/system/redis.service
-                 regexp: '^RuntimeDirectory'
-                 line: 'RuntimeDirectory=redis%i'
+#       - name: change redis systemd file
+#         lineinfile:
+#                 dest: /etc/systemd/system/redis.service
+#                 regexp: '^PIDFile'
+#                 line: 'PIDFile=/var/run/redis%i/redis-server.pid'
 
-       - name: change redis systemd file
-         lineinfile:
-                 dest: /etc/systemd/system/redis.service
-                 regexp: '^ReadWritePaths'
-                 line: 'ReadWritePaths=-/var/run/redis%i'
+#       - name: change redis systemd file
+#         lineinfile:
+#                 dest: /etc/systemd/system/redis.service
+#                 regexp: '^RuntimeDirectory'
+#                 line: 'RuntimeDirectory=redis%i'
 
-       - name: change redis systemd file
-         lineinfile:
-                 dest: /etc/systemd/system/redis.service
-                 regexp: '^Description'
-                 line: 'Description=Advanced key-value store (%I)'
+#       - name: change redis systemd file
+#         lineinfile:
+#                 dest: /etc/systemd/system/redis.service
+#                 regexp: '^ReadWritePaths'
+#                 line: 'ReadWritePaths=-/var/run/redis%i'
+
+#       - name: change redis systemd file
+#         lineinfile:
+#                 dest: /etc/systemd/system/redis.service
+#                 regexp: '^Description'
+#                 line: 'Description=Advanced key-value store (%I)'
        
        - name: Set CPUQota for Redis
          lineinfile:
@@ -75,25 +80,30 @@
        - name: create redis replica
          copy: src={{ redis_slave }} dest=/etc/redis owner=redis group=redis mode=0644
 
-       - name: Bind redis to 0.0.0.0
-         lineinfile:
-                 dest: /etc/redis/redis.conf
-                 regexp: '^bind 127.0.0.1 ::1$'
-                 line: 'bind 0.0.0.0'
-         notify:
-                       - Restart Redis
-
-       - name: change redis configs
-         lineinfile:
-                 dest: /etc/redis/redis.conf
-                 regexp: '^supervised no$'
-                 line: 'supervised systemd'
+       - name: change redis conf file
+#         lineinfile:
+#                 dest: /etc/redis/redis.conf
+#                 regexp: '^bind 127.0.0.1 ::1$'
+#                 line: 'bind 0.0.0.0'
+          template:
+                  src: /root/newproject/django-project/redis_conf_template.j2
+                  dest: /etc/redis/redis.conf
 
          notify:
                        - Restart Redis
 
+#        - name: change redis configs
+#         lineinfile:
+#                 dest: /etc/redis/redis.conf
+#                 regexp: '^supervised no$'
+#                 line: 'supervised systemd'
 
-       - name: "Redis systemd restart"
+
+         notify:
+                       - Restart Redis
+
+
+       - name: Redis systemd restart
          systemd:
                  daemon_reload: true
 
