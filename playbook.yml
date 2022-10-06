@@ -33,7 +33,7 @@
 
        - name: change redis systemd file
           template:
-                  src: /root/newproject/django-project/redis_service_template.j2
+                  src: /root/django-project/redis_service_template.j2
                   dest: /etc/systemd/system/redis.service 
        
        - name: Set CPUQota for Redis
@@ -49,7 +49,7 @@
 
        - name: change redis conf file
          template:
-                  src: /root/newproject/django-project/redis_conf_template.j2
+                  src: /root/django-project/redis_conf_template.j2
                   dest: /etc/redis/redis.conf
 
          notify:
