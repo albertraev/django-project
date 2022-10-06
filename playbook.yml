@@ -13,10 +13,6 @@
       redis_bind: 0.0.0.0
       systemd_yes: systemd
   tasks:
-
-       - name: Update Apt
-         apt:
-             update_cache: yes
         
        - name: Change Django Allowed Hosts
          lineinfile:
@@ -36,38 +32,9 @@
 
 
        - name: change redis systemd file
-#         lineinfile:
-#                 dest: /etc/systemd/system/redis.service
-#                 regexp: '^ExecStart'
-#                 line: 'ExecStart=/usr/bin/redis-server /etc/redis/redis%i.conf'
           template:
                   src: /root/newproject/django-project/redis_service_template.j2
                   dest: /etc/systemd/system/redis.service 
-
-
-#       - name: change redis systemd file
-#         lineinfile:
-#                 dest: /etc/systemd/system/redis.service
-#                 regexp: '^PIDFile'
-#                 line: 'PIDFile=/var/run/redis%i/redis-server.pid'
-
-#       - name: change redis systemd file
-#         lineinfile:
-#                 dest: /etc/systemd/system/redis.service
-#                 regexp: '^RuntimeDirectory'
-#                 line: 'RuntimeDirectory=redis%i'
-
-#       - name: change redis systemd file
-#         lineinfile:
-#                 dest: /etc/systemd/system/redis.service
-#                 regexp: '^ReadWritePaths'
-#                 line: 'ReadWritePaths=-/var/run/redis%i'
-
-#       - name: change redis systemd file
-#         lineinfile:
-#                 dest: /etc/systemd/system/redis.service
-#                 regexp: '^Description'
-#                 line: 'Description=Advanced key-value store (%I)'
        
        - name: Set CPUQota for Redis
          lineinfile:
@@ -81,22 +48,12 @@
          copy: src={{ redis_slave }} dest=/etc/redis owner=redis group=redis mode=0644
 
        - name: change redis conf file
-#         lineinfile:
-#                 dest: /etc/redis/redis.conf
-#                 regexp: '^bind 127.0.0.1 ::1$'
-#                 line: 'bind 0.0.0.0'
-          template:
+         template:
                   src: /root/newproject/django-project/redis_conf_template.j2
                   dest: /etc/redis/redis.conf
 
          notify:
                        - Restart Redis
-
-#        - name: change redis configs
-#         lineinfile:
-#                 dest: /etc/redis/redis.conf
-#                 regexp: '^supervised no$'
-#                 line: 'supervised systemd'
 
 
          notify:
@@ -109,7 +66,6 @@
 
 
        - name: Install Docker
-#        apt: name={{ item }} state=latest update_cache=yes
          apt:
              pkg: 
                 - apt-transport-https
