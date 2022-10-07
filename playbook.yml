@@ -4,14 +4,14 @@
   hosts: localhost
   become: yes
 
-
-
   vars:
       
       redis_slave: /root/django-project/redis-slave.conf
       redis_server_conf: redis%i
       redis_bind: 0.0.0.0
       systemd_yes: systemd
+      description: (%I)
+
   tasks:
         
        - name: Change Django Allowed Hosts
@@ -36,7 +36,7 @@
                   src: /root/django-project/redis_service_template.j2
                   dest: /etc/systemd/system/redis.service 
        
-       - name: Set CPUQota for Redis
+       - name: Set CPUQuota for Redis
          lineinfile:
                  dest: /etc/systemd/system/redis.service
                  regexp: '^RuntimeDirectoryMode'
@@ -51,10 +51,6 @@
          template:
                   src: /root/django-project/redis_conf_template.j2
                   dest: /etc/redis/redis.conf
-
-         notify:
-                       - Restart Redis
-
 
          notify:
                        - Restart Redis
@@ -88,6 +84,7 @@
 
        - name: Update apt and install docker-ce
          apt: update_cache=yes name=docker-ce state=latest
+
        - name: Install Docker Module for Python
          pip:
             name: docker
@@ -99,10 +96,12 @@
                path: /root/django-project/.
             source: build
          
-         
+         notify:
+                 - Rebuild Docker Image
+
        - name: Run Docker Container
          community.docker.docker_container:
-             name: django_container
+             name: new_container
              image: new2
              ports:
                    - "8000:8000"
@@ -114,6 +113,11 @@
              state: restarted
 
                   
-            
+        - name: Rebuild Docker Image
+          community.docker.docker_image:
+            name: new2
+            build:
+               path: /root/django-project/.
+            source: build    
                
 
