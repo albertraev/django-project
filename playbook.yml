@@ -31,7 +31,6 @@
              name: redis-server
              state: latest
 
-
        - name: change redis systemd file
          template:
                   src: /root/django-project/redis_service_template.j2
@@ -53,6 +52,9 @@
          notify:
                        - Restart Redis
 
+
+         notify: 
+                       - Restart Redis Slave
 
        - name: Redis systemd restart
          systemd:
@@ -110,6 +112,10 @@
              name: redis-server
              state: restarted
 
+        - name: Restart Redis
+          systemd:
+             name: redis-server@slave
+             state: restarted
                   
         - name: Rebuild Docker Image
           community.docker.docker_image:
