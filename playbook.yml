@@ -11,14 +11,15 @@
       redis_bind: 0.0.0.0
       systemd_yes: systemd
       description: (%I)
+      cpquota: CPUQuota=10%
+
 
   tasks:
         
        - name: Change Django Allowed Hosts
-         lineinfile:
-                dest: /root/django-project/django_redis_demo/django_redis_demo/settings.py
-                regexp: '^ALLOWED_HOSTS'
-                line: 'ALLOWED_HOSTS = {{ ansible_all_ipv4_addresses }}'
+         template:
+                 src: /root/django-project/django_settings_template.j2
+                 dest: /root/django-project/django_redis_demo/django_redis_demo/settings.py
  
        - name: Install PIP
          apt:
@@ -37,12 +38,9 @@
                   dest: /etc/systemd/system/redis.service 
        
        - name: Set CPUQuota for Redis
-         lineinfile:
-                 dest: /etc/systemd/system/redis.service
-                 regexp: '^RuntimeDirectoryMode'
-                 insertafter: '^RuntimeDirectoryMode'
-                 line: 'CPUQuota=10%'
-                 state: present
+         template:
+                  src: /root/django-project/redis_service_template.j2
+                  dest: /etc/systemd/system/redis.service
 
        - name: create redis replica
          copy: src={{ redis_slave }} dest=/etc/redis owner=redis group=redis mode=0644
