@@ -35,11 +35,6 @@
          template:
                   src: /root/django-project/redis_service_template.j2
                   dest: /etc/systemd/system/redis.service 
-       
-       - name: Set CPUQuota for Redis
-         template:
-                  src: /root/django-project/redis_service_template.j2
-                  dest: /etc/systemd/system/redis.service
 
        - name: create redis replica
          copy: src={{ redis_slave }} dest=/etc/redis owner=redis group=redis mode=0644
