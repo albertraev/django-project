@@ -52,10 +52,6 @@
          notify:
                        - Restart Redis
 
-
-         notify: 
-                       - Restart Redis Slave
-
        - name: Redis systemd restart
          systemd:
                  daemon_reload: true
@@ -112,10 +108,10 @@
              name: redis-server
              state: restarted
 
-        - name: Restart Redis
-          systemd:
-             name: redis-server@slave
-             state: restarted
+#        - name: Restart Redis
+#          systemd:
+#             name: redis-server@slave
+#             state: restarted
                   
         - name: Rebuild Docker Image
           community.docker.docker_image:
